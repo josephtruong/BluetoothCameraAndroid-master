@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
@@ -27,6 +28,7 @@ import com.example.bltcamera.utils.CodeSnippet;
 
 import java.io.IOException;
 import java.lang.reflect.Parameter;
+import java.util.List;
 
 /**
  * Created by hmspl on 7/2/16.
@@ -284,8 +286,24 @@ public class CameraActivity extends BaseActivity implements CameraView, View.OnC
         mCamera = Camera.open();
         if (mCamera != null) {
             Camera.Parameters p = mCamera.getParameters();
-            p.setPreviewSize(320, 240);
-            p.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            List<Camera.Size> supportedSizes = p.getSupportedPictureSizes();
+            Camera.Size bestSize = null;
+            for (Camera.Size camSize : supportedSizes) {
+                Log.d("NhanNATC", "=== Camsize : " + camSize.width + " = " + camSize.height);
+                if (bestSize == null || (bestSize != null && bestSize.width < camSize.width))
+                    bestSize = camSize;
+            }
+            p.setPictureSize(bestSize.width, bestSize.height);
+//            p.setPreviewSize(mDMetrics.widthPixels, mDMetrics.heightPixels);
+            p.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            p.setPictureFormat(PixelFormat.JPEG);
+            p.setJpegQuality(100);
+            List<String> focusModes = p.getSupportedFocusModes();
+            Log.d("NhanNATC","===focusModes=" + focusModes);
+            if (focusModes.contains(p.FOCUS_MODE_CONTINUOUS_PICTURE))
+                p.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+//            p.setPreviewSize(320, 240);
+//            p.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
             mCamera.setParameters(p);
             if (Integer.parseInt(Build.VERSION.SDK) >= 8)
                 CodeSnippet.setDisplayOrientation(mCamera, 90);
