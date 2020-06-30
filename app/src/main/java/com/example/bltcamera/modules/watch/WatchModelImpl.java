@@ -49,7 +49,12 @@ public class WatchModelImpl implements WatchModel, BluetoothListener {
 
     @Override
     public void turnFlash(int turnFlash) {
-        mBluetoothHandler.write(BluetoothHandler.TURN_FLASH);
+        if (turnFlash ==1) {
+            mBluetoothHandler.write(BluetoothHandler.TurnFlashlightOn.getBytes());
+        } else {
+            mBluetoothHandler.write(BluetoothHandler.TurnFlashlightOff.getBytes());
+
+        }
     }
 
     @Override

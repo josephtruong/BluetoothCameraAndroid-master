@@ -23,6 +23,8 @@ public interface CameraView extends BaseView{
 
     boolean isRecording();
 
-    void turnFlash(int turnFlash);
+    void turnFlashOn();
+
+    void turnFlashOff();
 
 }

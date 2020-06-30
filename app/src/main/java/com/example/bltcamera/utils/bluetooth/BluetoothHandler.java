@@ -29,7 +29,10 @@ public class BluetoothHandler {
     public static final String CAMERA = "camr";
     public static final String RECORD = "recrr";
 
-    public static final int TURN_FLASH = 0;
+    public  static int TURN_FLASH;
+
+    public  static String TurnFlashlightOn = "on";
+    public  static String TurnFlashlightOff = "off";
 
 
     private static UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
@@ -310,6 +313,7 @@ public class BluetoothHandler {
 
         public void write(int data) {
             try {
+                Log.d("Data", String.valueOf(data) + "&&&&&&&&&&&&&&");
                 mOutputStream.write(data);
                 mOutputStream.flush();
             } catch (IOException e) {

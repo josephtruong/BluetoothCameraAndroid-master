@@ -85,7 +85,17 @@ public class CameraPresenterImpl implements CameraPresenter, CameraModelImpl.Cam
     }
 
     @Override
+    public void turnFlashOn() {
+        mCameraView.turnFlashOn();
+    }
+
+    @Override
+    public void turnFlashOff() {
+        mCameraView.turnFlashOff();
+    }
+
+    @Override
     public void turnFlash(int turnFlash) {
-        mCameraView.turnFlash(turnFlash);
+
     }
 }

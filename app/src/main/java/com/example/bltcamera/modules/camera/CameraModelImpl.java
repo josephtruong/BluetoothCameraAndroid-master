@@ -143,9 +143,12 @@ public class CameraModelImpl implements CameraModel, BluetoothListener, Camera.P
             mCameraModelListener.onCameraCommandReceived();
         } else if (ack.equals(BluetoothHandler.RECORD)) {
             mCameraModelListener.onRecordCommandReceived();
-        } else if (ack.equals(String.valueOf(BluetoothHandler.TURN_FLASH))){
-            mCameraModelListener.turnFlash(BluetoothHandler.TURN_FLASH);
+        } else if (ack.equals(String.valueOf(BluetoothHandler.TurnFlashlightOn))){
+            mCameraModelListener.turnFlashOn();
+        } else if (ack.equals(String.valueOf(BluetoothHandler.TurnFlashlightOff))){
+            mCameraModelListener.turnFlashOff();
         }
+
     }
 
     @Override
@@ -188,7 +191,9 @@ public class CameraModelImpl implements CameraModel, BluetoothListener, Camera.P
 
         void onRecordCommandReceived();
 
-        void turnFlash(int turnFlash);
+        void turnFlashOn();
+
+        void turnFlashOff();
 
     }
 

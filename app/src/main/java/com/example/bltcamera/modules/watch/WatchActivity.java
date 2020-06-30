@@ -54,7 +54,6 @@ public class WatchActivity extends BaseActivity implements WatchView, View.OnCli
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                Log.d("TurnOn", isChecked+"");
                  if (isChecked) {
                      mWatchPresenter.onTurnFlash(1);
                  } else {

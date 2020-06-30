@@ -100,27 +100,18 @@ public class CameraActivity extends BaseActivity implements CameraView, View.OnC
     }
 
     @Override
-    public void turnFlash(int turnFlash) {
-        Toast.makeText(this, String.valueOf(turnFlash), Toast.LENGTH_SHORT).show();
-         if (turnFlash == 1){
-             turnFlashlightOn();
-         } else {
-           turnFlashlightOff();
-         }
-    }
-
-    private void turnFlashlightOn()  {
+    public void turnFlashOn() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             camManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-               String cameraId = null;
-               if (camManager != null) {
-                   try {
-                       cameraId = camManager.getCameraIdList()[0];
-                       camManager.setTorchMode(cameraId, true);
-                   } catch (CameraAccessException e) {
-                       e.printStackTrace();
-                   }
-               }
+            String cameraId = null;
+            if (camManager != null) {
+                try {
+                    cameraId = camManager.getCameraIdList()[0];
+                    camManager.setTorchMode(cameraId, true);
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+            }
         } else {
             Camera.Parameters parameters = mCamera.getParameters();
             parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
@@ -129,7 +120,8 @@ public class CameraActivity extends BaseActivity implements CameraView, View.OnC
         }
     }
 
-    private void turnFlashlightOff() {
+    @Override
+    public void turnFlashOff() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             camManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
             String cameraId = null;
@@ -148,6 +140,8 @@ public class CameraActivity extends BaseActivity implements CameraView, View.OnC
             mCamera.stopPreview();
         }
     }
+
+
 
     @Override
     public void stopRecording() {
