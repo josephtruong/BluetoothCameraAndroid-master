@@ -39,6 +39,16 @@
             android:padding="@dimen/dp_10"
             android:scaleType="centerInside"
             android:src="@drawable/record" />
+
+        <ToggleButton
+            android:id="@+id/turnFlash"
+            android:layout_marginLeft="@dimen/dp_12"
+            android:padding="@dimen/dp_10"
+            android:layout_toRightOf="@+id/record"
+            android:background="@drawable/circle_background"
+            android:layout_width="@dimen/dp_60"
+            android:layout_height="@dimen/dp_60"/>
+
     </RelativeLayout>
 
 

@@ -20,4 +20,6 @@ public interface CameraPresenter {
 
     void stopEverything();
 
+    void turnFlash(int turnFlash);
+
 }

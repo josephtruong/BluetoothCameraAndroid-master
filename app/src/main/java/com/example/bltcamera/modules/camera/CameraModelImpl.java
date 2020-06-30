@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.bltcamera.Constants.Device;
 import com.example.bltcamera.commons.ThreadHandler;
@@ -142,6 +143,8 @@ public class CameraModelImpl implements CameraModel, BluetoothListener, Camera.P
             mCameraModelListener.onCameraCommandReceived();
         } else if (ack.equals(BluetoothHandler.RECORD)) {
             mCameraModelListener.onRecordCommandReceived();
+        } else if (ack.equals(String.valueOf(BluetoothHandler.TURN_FLASH))){
+            mCameraModelListener.turnFlash(BluetoothHandler.TURN_FLASH);
         }
     }
 
@@ -172,6 +175,7 @@ public class CameraModelImpl implements CameraModel, BluetoothListener, Camera.P
         }
     }
 
+
     public interface CameraModelListener {
 
         void onConnectionSuccessful(Camera.PreviewCallback previewCallback);
@@ -183,6 +187,8 @@ public class CameraModelImpl implements CameraModel, BluetoothListener, Camera.P
         void onCameraCommandReceived();
 
         void onRecordCommandReceived();
+
+        void turnFlash(int turnFlash);
 
     }
 

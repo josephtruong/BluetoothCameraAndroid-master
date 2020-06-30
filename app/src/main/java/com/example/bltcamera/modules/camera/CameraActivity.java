@@ -1,16 +1,21 @@
 package com.example.bltcamera.modules.camera;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.hardware.Camera;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -26,6 +31,7 @@ import java.lang.reflect.Parameter;
 /**
  * Created by hmspl on 7/2/16.
  */
+@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class CameraActivity extends BaseActivity implements CameraView, View.OnClickListener, SurfaceHolder.Callback {
 
     private Camera mCamera;
@@ -41,6 +47,9 @@ public class CameraActivity extends BaseActivity implements CameraView, View.OnC
     private MediaRecorder mMediaRecorder;
 
     private CameraPresenter mCameraPresenter;
+
+    private CameraManager camManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +94,56 @@ public class CameraActivity extends BaseActivity implements CameraView, View.OnC
             mCamera.setPreviewCallback(previewCallback);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void turnFlash(int turnFlash) {
+        Toast.makeText(this, String.valueOf(turnFlash), Toast.LENGTH_SHORT).show();
+         if (turnFlash == 1){
+             turnFlashlightOn();
+         } else {
+           turnFlashlightOff();
+         }
+    }
+
+    private void turnFlashlightOn()  {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            camManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+               String cameraId = null;
+               if (camManager != null) {
+                   try {
+                       cameraId = camManager.getCameraIdList()[0];
+                       camManager.setTorchMode(cameraId, true);
+                   } catch (CameraAccessException e) {
+                       e.printStackTrace();
+                   }
+               }
+        } else {
+            Camera.Parameters parameters = mCamera.getParameters();
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            mCamera.setParameters(parameters);
+            mCamera.setPreviewCallback(previewCallback);
+        }
+    }
+
+    private void turnFlashlightOff() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            camManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+            String cameraId = null;
+            if (camManager != null) {
+                try {
+                    cameraId = camManager.getCameraIdList()[0];
+                    camManager.setTorchMode(cameraId, false);
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            Camera.Parameters parameters = mCamera.getParameters();
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            mCamera.setParameters(parameters);
+            mCamera.stopPreview();
         }
     }
 

@@ -5,9 +5,12 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ToggleButton;
 
 import com.example.bltcamera.R;
 import com.example.bltcamera.commons.BaseActivity;
@@ -32,6 +35,8 @@ public class WatchActivity extends BaseActivity implements WatchView, View.OnCli
 
     private WatchPresenter mWatchPresenter;
 
+    private ToggleButton toggleButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +48,21 @@ public class WatchActivity extends BaseActivity implements WatchView, View.OnCli
 
         mWatchPresenter = WatchPresenterImpl.newInstance(this);
         mWatchPresenter.onCreate(getIntent().getExtras());
+
+        toggleButton = findViewById(R.id.turnFlash);
+
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                Log.d("TurnOn", isChecked+"");
+                 if (isChecked) {
+                     mWatchPresenter.onTurnFlash(1);
+                 } else {
+                     mWatchPresenter.onTurnFlash(0);
+                 }
+            }
+        });
+
 
     }
 

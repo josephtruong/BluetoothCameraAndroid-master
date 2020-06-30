@@ -13,4 +13,7 @@ public interface WatchModel {
 
     void commandToStartStopRecording();
 
+    void turnFlash(int turnFlash);
+
+
 }

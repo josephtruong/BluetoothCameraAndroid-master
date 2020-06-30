@@ -83,4 +83,9 @@ public class CameraPresenterImpl implements CameraPresenter, CameraModelImpl.Cam
         mCameraView.showToast("Connection lost");
         mCameraView.navigateBack();
     }
+
+    @Override
+    public void turnFlash(int turnFlash) {
+        mCameraView.turnFlash(turnFlash);
+    }
 }

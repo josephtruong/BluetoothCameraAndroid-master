@@ -48,6 +48,11 @@ public class WatchModelImpl implements WatchModel, BluetoothListener {
     }
 
     @Override
+    public void turnFlash(int turnFlash) {
+        mBluetoothHandler.write(BluetoothHandler.TURN_FLASH);
+    }
+
+    @Override
     public void onReceivedData(byte[] bytes) {
         final Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         ThreadHandler.getInstance().doInForground(new Runnable() {

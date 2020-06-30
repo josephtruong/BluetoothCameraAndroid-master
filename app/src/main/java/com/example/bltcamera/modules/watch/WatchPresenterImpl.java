@@ -40,6 +40,11 @@ public class WatchPresenterImpl implements WatchPresenter, WatchModelImpl.WatchM
     }
 
     @Override
+    public void onTurnFlash(int turnFlash) {
+        mWatchModel.turnFlash(turnFlash);
+    }
+
+    @Override
     public void onClickRecord() {
         mWatchModel.commandToStartStopRecording();
     }

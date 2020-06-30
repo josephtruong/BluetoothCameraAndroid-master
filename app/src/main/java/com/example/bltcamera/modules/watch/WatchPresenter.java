@@ -15,4 +15,6 @@ public interface WatchPresenter {
 
     void onClickRecord();
 
+    void onTurnFlash(int turnFlash);
+
 }

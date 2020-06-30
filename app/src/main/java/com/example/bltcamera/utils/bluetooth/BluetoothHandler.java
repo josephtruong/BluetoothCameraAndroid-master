@@ -29,6 +29,9 @@ public class BluetoothHandler {
     public static final String CAMERA = "camr";
     public static final String RECORD = "recrr";
 
+    public static final int TURN_FLASH = 0;
+
+
     private static UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
     private final boolean mIsWatchView;
     private int mState;
@@ -106,6 +109,15 @@ public class BluetoothHandler {
     }
 
     public synchronized void write(byte[] data) {
+        synchronized (this) {
+            if (mState != STATE_CONNECTED) {
+                return;
+            }
+            mConnectedThread.write(data);
+        }
+    }
+
+    public synchronized void write(int data) {
         synchronized (this) {
             if (mState != STATE_CONNECTED) {
                 return;
@@ -294,6 +306,18 @@ public class BluetoothHandler {
                 mBluetoothListener.onLostConnection();
             }
         }
+
+
+        public void write(int data) {
+            try {
+                mOutputStream.write(data);
+                mOutputStream.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+                mBluetoothListener.onLostConnection();
+            }
+        }
+
 
         public void cancel() {
             try {
