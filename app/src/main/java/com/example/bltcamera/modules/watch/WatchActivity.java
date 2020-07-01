@@ -2,6 +2,8 @@ package com.example.bltcamera.modules.watch;
 
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -10,15 +12,17 @@ import android.view.View;
 import android.view.Window;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.bltcamera.R;
 import com.example.bltcamera.commons.BaseActivity;
 import com.example.bltcamera.commons.widgets.CTextView;
+import com.example.bltcamera.preview.PreviewActivity;
 
-/**
- * Created by hmspl on 7/2/16.
- */
+import java.io.File;
+import java.io.FileOutputStream;
+
 public class WatchActivity extends BaseActivity implements WatchView, View.OnClickListener {
 
     private static final int BT_ENABLE_REQUEST = 33;
@@ -37,17 +41,16 @@ public class WatchActivity extends BaseActivity implements WatchView, View.OnCli
 
     private ToggleButton toggleButton;
 
+    private  boolean isPhoto = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_watch);
 
-        mPreviewImageView = (ImageView) findViewById(R.id.activity_watch_imageView);
+        mPreviewImageView = findViewById(R.id.activity_watch_imageView);
         findViewById(R.id.capture).setOnClickListener(this);
         findViewById(R.id.record).setOnClickListener(this);
-
-        mWatchPresenter = WatchPresenterImpl.newInstance(this);
-        mWatchPresenter.onCreate(getIntent().getExtras());
 
         toggleButton = findViewById(R.id.turnFlash);
 
@@ -74,6 +77,8 @@ public class WatchActivity extends BaseActivity implements WatchView, View.OnCli
     @Override
     protected void onResume() {
         super.onResume();
+        mWatchPresenter = WatchPresenterImpl.newInstance(this);
+        mWatchPresenter.onCreate(getIntent().getExtras());
         mWatchPresenter.initiateBluetooth();
     }
 
@@ -90,6 +95,31 @@ public class WatchActivity extends BaseActivity implements WatchView, View.OnCli
     @Override
     public void showFrameInImageView(Bitmap image) {
         mPreviewImageView.setImageBitmap(image);
+        if (isPhoto) {
+           isPhoto = false;
+           Toast.makeText(this, "Successful photography", Toast.LENGTH_SHORT).show();
+       }
+    }
+
+    private void saveImage(Bitmap bitmap){
+        ContextWrapper cw = new ContextWrapper(getContext());
+        File directory = cw.getDir("EVN_ECMR_BSTAR_IMAGE", Context.MODE_PRIVATE);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        FileOutputStream fos = null;
+        try {
+            String imagePath = directory + File.separator + "image_camera_dv" + System.currentTimeMillis() + ".png";
+            fos = new FileOutputStream(imagePath);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+            Intent intent = new Intent(getActivity(), PreviewActivity.class);
+            intent.putExtra(PreviewActivity.EXTRA_IMAGE_LOCATION, imagePath);
+            intent.putExtra(PreviewActivity.EXTRA_FILE_PATH, directory.getAbsolutePath());
+            startActivity(intent);
+        } catch (Exception e) {
+            Log.e("SAVE_IMAGE", e.getMessage(), e);
+        }
     }
 
     @Override
@@ -100,7 +130,7 @@ public class WatchActivity extends BaseActivity implements WatchView, View.OnCli
         View dialogView = View.inflate(this, R.layout.inflater_waiting_for_connection, null);
         mDummyView = dialogView.findViewById(R.id.dummy);
         mExitButton = dialogView.findViewById(R.id.progress_exit);
-        mProgressText = (CTextView) dialogView.findViewById(R.id.progress_message);
+        mProgressText = dialogView.findViewById(R.id.progress_message);
         mExitButton.setOnClickListener(this);
 
         dialog.setCancelable(false);
@@ -129,6 +159,7 @@ public class WatchActivity extends BaseActivity implements WatchView, View.OnCli
                 onBackPressed();
                 break;
             case R.id.capture:
+                isPhoto = true;
                 mWatchPresenter.onClickCamera();
                 break;
             case R.id.record:

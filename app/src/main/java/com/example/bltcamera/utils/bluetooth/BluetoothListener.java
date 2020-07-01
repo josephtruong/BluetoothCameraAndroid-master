@@ -2,9 +2,6 @@ package com.example.bltcamera.utils.bluetooth;
 
 import android.bluetooth.BluetoothDevice;
 
-/**
- * Created by hmspl on 7/2/16.
- */
 public interface BluetoothListener {
 
     void onReceivedData(byte[] bytes);

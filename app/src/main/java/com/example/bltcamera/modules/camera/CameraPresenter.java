@@ -1,14 +1,11 @@
 package com.example.bltcamera.modules.camera;
 
-import android.hardware.Camera;
+import android.app.Activity;
 import android.os.Bundle;
 
-/**
- * Created by hmspl on 7/2/16.
- */
 public interface CameraPresenter {
 
-    void onCreateView(Bundle extras);
+    void onCreateView(Bundle extras, Activity activity);
 
     void onClickCamera();
 

@@ -6,9 +6,6 @@ import android.os.Bundle;
 
 import com.example.bltcamera.commons.ThreadHandler;
 
-/**
- * Created by hmspl on 7/2/16.
- */
 public class WatchPresenterImpl implements WatchPresenter, WatchModelImpl.WatchModelListener {
 
     private WatchView mWatchView;

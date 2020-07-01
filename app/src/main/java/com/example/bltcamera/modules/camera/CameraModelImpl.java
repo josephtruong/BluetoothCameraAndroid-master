@@ -1,6 +1,9 @@
 package com.example.bltcamera.modules.camera;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
@@ -9,22 +12,19 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.example.bltcamera.Constants.Device;
 import com.example.bltcamera.commons.ThreadHandler;
 import com.example.bltcamera.utils.CodeSnippet;
 import com.example.bltcamera.utils.bluetooth.BluetoothHandler;
 import com.example.bltcamera.utils.bluetooth.BluetoothListener;
+import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-/**
- * Created by hmspl on 7/2/16.
- */
 public class CameraModelImpl implements CameraModel, BluetoothListener, Camera.PreviewCallback {
 
     private int previewMissedCount;
@@ -50,8 +50,13 @@ public class CameraModelImpl implements CameraModel, BluetoothListener, Camera.P
     }
 
     @Override
-    public void saveDeviceDetail(Bundle extras) {
+    public void saveDeviceDetail(Bundle extras, Activity activity) {
         mBluetoothDevice = extras.getParcelable(Device.BLUETOOTH_DEVICE_DTO);
+        SharedPreferences sharedPreferences = activity.getSharedPreferences("SaveDevice", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = gson.toJson(mBluetoothDevice);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("device", json).commit();
         mBluetoothHandler.connect(mBluetoothDevice);
     }
 

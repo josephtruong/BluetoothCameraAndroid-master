@@ -1,13 +1,10 @@
 package com.example.bltcamera.modules.camera;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraManager;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Build;
@@ -15,7 +12,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -27,12 +23,8 @@ import com.example.bltcamera.commons.BaseActivity;
 import com.example.bltcamera.utils.CodeSnippet;
 
 import java.io.IOException;
-import java.lang.reflect.Parameter;
 import java.util.List;
 
-/**
- * Created by hmspl on 7/2/16.
- */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class CameraActivity extends BaseActivity implements CameraView, View.OnClickListener, SurfaceHolder.Callback {
 
@@ -50,21 +42,18 @@ public class CameraActivity extends BaseActivity implements CameraView, View.OnC
 
     private CameraPresenter mCameraPresenter;
 
-    private CameraManager camManager;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
         mCameraPresenter = CameraPresenterImpl.newInstance(this);
-        mCameraPresenter.onCreateView(getIntent().getExtras());
+        mCameraPresenter.onCreateView(getIntent().getExtras(), this);
     }
 
     @Override
     public void initViews() {
-        mSurfaceView = (SurfaceView) findViewById(R.id.activity_camera_surface);
+        mSurfaceView =  findViewById(R.id.activity_camera_surface);
         mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceHolder.addCallback(this);
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -101,44 +90,20 @@ public class CameraActivity extends BaseActivity implements CameraView, View.OnC
 
     @Override
     public void turnFlashOn() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            camManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-            String cameraId = null;
-            if (camManager != null) {
-                try {
-                    cameraId = camManager.getCameraIdList()[0];
-                    camManager.setTorchMode(cameraId, true);
-                } catch (CameraAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            Camera.Parameters parameters = mCamera.getParameters();
-            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-            mCamera.setParameters(parameters);
-            mCamera.setPreviewCallback(previewCallback);
-        }
+        Camera.Parameters parameters = mCamera.getParameters();
+        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+        mCamera.setParameters(parameters);
+        mCamera.startPreview();
     }
+
+
 
     @Override
     public void turnFlashOff() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            camManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-            String cameraId = null;
-            if (camManager != null) {
-                try {
-                    cameraId = camManager.getCameraIdList()[0];
-                    camManager.setTorchMode(cameraId, false);
-                } catch (CameraAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            Camera.Parameters parameters = mCamera.getParameters();
-            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-            mCamera.setParameters(parameters);
-            mCamera.stopPreview();
-        }
+        Camera.Parameters parameters = mCamera.getParameters();
+        parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        mCamera.setParameters(parameters);
+
     }
 
 
@@ -294,7 +259,7 @@ public class CameraActivity extends BaseActivity implements CameraView, View.OnC
             p.setJpegQuality(100);
             List<String> focusModes = p.getSupportedFocusModes();
             Log.d("NhanNATC","===focusModes=" + focusModes);
-            if (focusModes.contains(p.FOCUS_MODE_CONTINUOUS_PICTURE))
+            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
                 p.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 //            p.setPreviewSize(320, 240);
 //            p.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);

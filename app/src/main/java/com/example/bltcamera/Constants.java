@@ -1,8 +1,5 @@
 package com.example.bltcamera;
 
-/**
- * Created by hmspl on 7/2/16.
- */
 public interface Constants {
 
     interface Device {

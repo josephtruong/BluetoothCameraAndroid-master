@@ -9,9 +9,6 @@ import com.example.bltcamera.R;
 import com.example.bltcamera.commons.CAdapter;
 import com.example.bltcamera.commons.widgets.CTextView;
 
-/**
- * Created by hmspl on 7/2/16.
- */
 public class MobilePresenterImpl implements MobilePresenter, MobileModelImpl.MobileModelListener, CAdapter.OnGetViewListener<BluetoothDevice> {
 
     private MobileView mMobileView;

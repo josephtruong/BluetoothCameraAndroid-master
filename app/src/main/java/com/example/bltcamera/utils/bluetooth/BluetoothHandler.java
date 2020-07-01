@@ -12,29 +12,20 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.UUID;
 
-/**
- * Created by hmspl on 6/2/16.
- */
 public class BluetoothHandler {
 
     public static final String ACK_INIT = "acin";
     public static final String ACK_DATA_RECEIVED = "acdr";
-
     public static final String DATA_END = "dten";
     public static final String DATA_START = "dtst";
-
     public static final String CAMERA = "camr";
     public static final String RECORD = "recrr";
-
-    public  static int TURN_FLASH;
-
     public  static String TurnFlashlightOn = "on";
     public  static String TurnFlashlightOff = "off";
-
-
     private static UUID MY_UUID = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
     private final boolean mIsWatchView;
     private int mState;
@@ -165,9 +156,6 @@ public class BluetoothHandler {
         public ConnectThread(BluetoothDevice bluetoothDevice) {
             mBluetoothDevice = bluetoothDevice;
             try {
-//                mBluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(MY_UUID);
-                /*UUID uuid = bluetoothDevice.getUuids()[0].getUuid();
-                MY_UUID = uuid;*/
                 mBluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(MY_UUID);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -239,7 +227,7 @@ public class BluetoothHandler {
                         if (mIsWatchView) {
                             int dataLength = data.length;
                             if (dataLength == 4) {
-                                String key = new String(data, "UTF-8").trim();
+                                String key = new String(data, StandardCharsets.UTF_8).trim();
                                 if (key.equals(DATA_START)) {
                                     write(ACK_INIT.getBytes());
                                     byteArrayOutputStream = new ByteArrayOutputStream();
@@ -256,7 +244,7 @@ public class BluetoothHandler {
                                 if (completeDataSize > 4) {
                                     final byte[] completeData = byteArrayOutputStream.toByteArray();
                                     byte[] keyData = Arrays.copyOfRange(completeData, completeDataSize - 4, completeDataSize);
-                                    String key = new String(keyData, "UTF-8").trim();
+                                    String key = new String(keyData, StandardCharsets.UTF_8).trim();
                                     if (key.equals(DATA_END)) {
 
                                         mBluetoothListener.onReceivedData(Arrays.copyOfRange(completeData, 0, completeDataSize - 4));
@@ -266,7 +254,7 @@ public class BluetoothHandler {
                                 }
                             }
                         } else {
-                            final String receivedKey = new String(data, "UTF-8").trim();
+                            final String receivedKey = new String(data, StandardCharsets.UTF_8).trim();
                             ThreadHandler.getInstance().doInForground(new Runnable() {
                                 @Override
                                 public void run() {
@@ -313,7 +301,7 @@ public class BluetoothHandler {
 
         public void write(int data) {
             try {
-                Log.d("Data", String.valueOf(data) + "&&&&&&&&&&&&&&");
+                Log.d("Data", data + "&&&&&&&&&&&&&&");
                 mOutputStream.write(data);
                 mOutputStream.flush();
             } catch (IOException e) {

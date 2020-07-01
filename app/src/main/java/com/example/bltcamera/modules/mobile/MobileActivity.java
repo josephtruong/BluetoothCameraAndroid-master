@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -12,15 +13,14 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.bltcamera.Constants;
 import com.example.bltcamera.R;
 import com.example.bltcamera.commons.BaseActivity;
 import com.example.bltcamera.commons.CAdapter;
 import com.example.bltcamera.commons.widgets.CTextView;
 import com.example.bltcamera.modules.camera.CameraActivity;
+import com.google.gson.Gson;
 
-/**
- * Created by hmspl on 7/2/16.
- */
 public class MobileActivity extends BaseActivity implements MobileView, View.OnClickListener, AdapterView.OnItemClickListener {
 
     private static final int BT_ENABLE_REQUEST = 99;
@@ -34,21 +34,31 @@ public class MobileActivity extends BaseActivity implements MobileView, View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mobile);
-
         mMobilePresenter = MobilePresenterImpl.newInstance(this);
         mMobilePresenter.onCreateView();
+        SharedPreferences sharedPreferences = getSharedPreferences("SaveDevice", MODE_PRIVATE);
+        String json = sharedPreferences.getString("device","");
+        if (!json.isEmpty()){
+            Gson gson = new Gson();
+            BluetoothDevice bluetoothDevice = gson.fromJson(json, BluetoothDevice.class);
+            Intent intent = new Intent(this, CameraActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Constants.Device.BLUETOOTH_DEVICE_DTO, bluetoothDevice);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
     }
 
     @Override
     public void initViews() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        CTextView cTextView = (CTextView) toolbar.findViewById(R.id.toolbar_textview);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        CTextView cTextView = toolbar.findViewById(R.id.toolbar_textview);
         cTextView.setText("Devices");
         toolbar.setNavigationIcon(R.drawable.back);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        mDevicesListView = (ListView) findViewById(R.id.activity_mobile_device_list);
+        mDevicesListView = findViewById(R.id.activity_mobile_device_list);
         mDevicesListView.setOnItemClickListener(this);
 
         findViewById(R.id.inapp_enable).setOnClickListener(this);
@@ -89,7 +99,7 @@ public class MobileActivity extends BaseActivity implements MobileView, View.OnC
         mNewDeviceListDialog = new Dialog(this);
         mNewDeviceListDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         View view = View.inflate(this, R.layout.inflater_new_devices, null);
-        ListView listView = (ListView) view.findViewById(R.id.new_device_list);
+        ListView listView = view.findViewById(R.id.new_device_list);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

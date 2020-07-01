@@ -2,6 +2,7 @@ package com.example.bltcamera.modules.main;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.selection_container).setVisibility(View.VISIBLE);
         findViewById(R.id.activity_main_watch).setOnClickListener(this);
         findViewById(R.id.activity_main_mobile).setOnClickListener(this);
+        findViewById(R.id.activity_main_connect_bluetooth).setOnClickListener(this);
     }
 
     @Override
@@ -49,6 +51,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.activity_main_exit:
                 finish();
+                break;
+            case R.id.activity_main_connect_bluetooth:
+                SharedPreferences sharedPreferences = getSharedPreferences("SaveDevice", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.remove("device").clear().apply();
                 break;
         }
     }

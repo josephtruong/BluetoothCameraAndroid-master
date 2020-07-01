@@ -17,9 +17,6 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by hmspl on 5/2/16.
- */
 public class CodeSnippet {
 
     private static final String TAG = "CodeSnippet";
@@ -74,9 +71,9 @@ public class CodeSnippet {
     public static void setDisplayOrientation(Camera camera, int angle) {
         Method downPolymorphic;
         try {
-            downPolymorphic = camera.getClass().getMethod("setDisplayOrientation", new Class[]{int.class});
+            downPolymorphic = camera.getClass().getMethod("setDisplayOrientation", int.class);
             if (downPolymorphic != null)
-                downPolymorphic.invoke(camera, new Object[]{angle});
+                downPolymorphic.invoke(camera, angle);
         } catch (Exception e1) {
         }
     }

@@ -8,9 +8,6 @@ import com.example.bltcamera.commons.ThreadHandler;
 import com.example.bltcamera.utils.bluetooth.BluetoothHandler;
 import com.example.bltcamera.utils.bluetooth.BluetoothListener;
 
-/**
- * Created by hmspl on 7/2/16.
- */
 public class WatchModelImpl implements WatchModel, BluetoothListener {
 
     private BluetoothHandler mBluetoothHandler;

@@ -39,6 +39,21 @@
             android:textColor="@color/white"
             android:textSize="@dimen/dp_20"
             app:typeface="roboto_medium" />
+
+
+        <com.example.bltcamera.commons.widgets.CTextView
+            android:id="@+id/activity_main_connect_bluetooth"
+            android:layout_width="@dimen/dp_200"
+            android:layout_height="@dimen/dp_80"
+            android:layout_below="@+id/activity_main_mobile"
+            android:layout_marginTop="@dimen/dp_20"
+            android:background="@drawable/rounded_corner_button"
+            android:gravity="center"
+            android:text="@string/connect_bluetooth"
+            android:textColor="@color/white"
+            android:textSize="@dimen/dp_20"
+            app:typeface="roboto_medium" />
+
     </RelativeLayout>
 
 

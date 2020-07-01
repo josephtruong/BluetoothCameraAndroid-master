@@ -1,11 +1,9 @@
 package com.example.bltcamera.modules.camera;
 
+import android.app.Activity;
 import android.hardware.Camera;
 import android.os.Bundle;
 
-/**
- * Created by hmspl on 7/2/16.
- */
 public class CameraPresenterImpl implements CameraPresenter, CameraModelImpl.CameraModelListener {
 
     private CameraView mCameraView;
@@ -22,8 +20,8 @@ public class CameraPresenterImpl implements CameraPresenter, CameraModelImpl.Cam
     }
 
     @Override
-    public void onCreateView(Bundle extras) {
-        mCameraModel.saveDeviceDetail(extras);
+    public void onCreateView(Bundle extras, Activity activity) {
+        mCameraModel.saveDeviceDetail(extras, activity);
         mCameraView.initViews();
     }
 

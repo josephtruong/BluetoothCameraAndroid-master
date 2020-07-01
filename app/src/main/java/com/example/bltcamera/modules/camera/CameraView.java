@@ -4,9 +4,6 @@ import android.hardware.Camera;
 
 import com.example.bltcamera.commons.BaseView;
 
-/**
- * Created by hmspl on 7/2/16.
- */
 public interface CameraView extends BaseView{
 
     void initViews();
