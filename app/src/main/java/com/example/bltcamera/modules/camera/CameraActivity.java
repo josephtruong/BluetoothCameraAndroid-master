@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class CameraActivity extends BaseActivity implements CameraView, View.OnClickListener, SurfaceHolder.Callback {
+public class CameraActivity extends BaseActivity implements CameraView, SurfaceHolder.Callback {
 
     private Camera mCamera;
 
@@ -58,10 +58,6 @@ public class CameraActivity extends BaseActivity implements CameraView, View.OnC
         mSurfaceHolder.addCallback(this);
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
-        mRecordbutton = findViewById(R.id.record);
-        mRecordbutton.setOnClickListener(this);
-
-        findViewById(R.id.camera).setOnClickListener(this);
     }
 
     @Override
@@ -224,21 +220,6 @@ public class CameraActivity extends BaseActivity implements CameraView, View.OnC
         mCameraPresenter.stopEverything();
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.camera:
-                mCameraPresenter.onClickCamera();
-                break;
-            case R.id.record:
-                if (!recording) {
-                    mCameraPresenter.onClickStartRecord();
-                } else {
-                    mCameraPresenter.onClickStopRecord();
-                }
-                break;
-        }
-    }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
