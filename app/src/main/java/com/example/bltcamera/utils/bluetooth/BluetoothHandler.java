@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.media.ExifInterface;
 import android.util.Log;
 
 import com.example.bltcamera.commons.ThreadHandler;
@@ -280,16 +281,6 @@ public class BluetoothHandler {
 
         public void write(byte[] data) {
             try {
-               /* for (int i = 0; i < data.length; i += ARRAY_BUFFER) {
-                    int len;
-                    if (data.length - i >= ARRAY_BUFFER) {
-                        len = ARRAY_BUFFER;
-                        mOutputStream.write(data, i, len);
-                    } else {
-                        len = data.length - i;
-                        mOutputStream.write(data, i, len);
-                    }
-                }*/
                 mOutputStream.write(data);
                 mOutputStream.flush();
             } catch (IOException e) {
@@ -301,7 +292,6 @@ public class BluetoothHandler {
 
         public void write(int data) {
             try {
-                Log.d("Data", data + "&&&&&&&&&&&&&&");
                 mOutputStream.write(data);
                 mOutputStream.flush();
             } catch (IOException e) {

@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -97,7 +99,7 @@ public class WatchActivity extends BaseActivity implements WatchView, View.OnCli
         mPreviewImageView.setImageBitmap(image);
         if (isPhoto) {
            isPhoto = false;
-           Toast.makeText(this, "Successful photography", Toast.LENGTH_SHORT).show();
+           saveImage(image);
        }
     }
 
@@ -111,7 +113,10 @@ public class WatchActivity extends BaseActivity implements WatchView, View.OnCli
         try {
             String imagePath = directory + File.separator + "image_camera_dv" + System.currentTimeMillis() + ".png";
             fos = new FileOutputStream(imagePath);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            ExifInterface ei = new ExifInterface(imagePath);
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+            Bitmap rotateBitmap = rotateBitmap(bitmap, orientation);
+            rotateBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.close();
             Intent intent = new Intent(getActivity(), PreviewActivity.class);
             intent.putExtra(PreviewActivity.EXTRA_IMAGE_LOCATION, imagePath);
@@ -177,6 +182,48 @@ public class WatchActivity extends BaseActivity implements WatchView, View.OnCli
             } else {
                 finish();
             }
+        }
+    }
+
+
+    private   Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                matrix.setScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                matrix.setRotate(180);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_TRANSPOSE:
+                matrix.setRotate(90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_TRANSVERSE:
+                matrix.setRotate(-90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(-90);
+                break;
+            default:
+                return bitmap;
+        }
+        try {
+            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            bitmap.recycle();
+            return bmRotated;
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

@@ -1,11 +1,13 @@
 package com.example.bltcamera.modules.camera;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
+import android.media.ExifInterface;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -31,8 +34,6 @@ public class CameraActivity extends BaseActivity implements CameraView, SurfaceH
     private Camera mCamera;
 
     private SurfaceView mSurfaceView;
-
-    private View mRecordbutton;
 
     private boolean recording = false;
 
@@ -64,7 +65,6 @@ public class CameraActivity extends BaseActivity implements CameraView, SurfaceH
     public void startRecording(Camera.PreviewCallback previewCallback) {
         recording = true;
         mCamera.unlock();
-        mRecordbutton.setBackgroundResource(R.drawable.red_circle_background);
         mMediaRecorder = new MediaRecorder();
         mMediaRecorder.setCamera(mCamera);
         mMediaRecorder.setPreviewDisplay(mSurfaceHolder.getSurface());
@@ -107,7 +107,6 @@ public class CameraActivity extends BaseActivity implements CameraView, SurfaceH
     @Override
     public void stopRecording() {
         recording = false;
-        mRecordbutton.setBackgroundResource(R.drawable.circle_background);
         try {
             mMediaRecorder.stop();
             mMediaRecorder.release();
@@ -166,7 +165,7 @@ public class CameraActivity extends BaseActivity implements CameraView, SurfaceH
     @Override
     public void setCameraPreview(Camera.PreviewCallback previewCallback) {
         this.previewCallback = previewCallback;
-
+        setCameraDisplayOrientation();
         if (ActivityCompat.checkSelfPermission(CameraActivity.this,  Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mCamera.setPreviewCallback(previewCallback);
         } else {
@@ -179,8 +178,9 @@ public class CameraActivity extends BaseActivity implements CameraView, SurfaceH
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
          if (requestCode == 1001){
              if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                 mCameraPresenter.onPictureTaken(dataCamera);
-                 mCamera.startPreview();
+                if (previewCallback != null) {
+                     mCamera.setPreviewCallback(previewCallback);
+                }
              }else {
                  Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
              }
@@ -219,7 +219,6 @@ public class CameraActivity extends BaseActivity implements CameraView, SurfaceH
         }
         mCameraPresenter.stopEverything();
     }
-
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -264,6 +263,7 @@ public class CameraActivity extends BaseActivity implements CameraView, SurfaceH
                 e.printStackTrace();
             }
         }
+
     }
 
     @Override
@@ -280,5 +280,40 @@ public class CameraActivity extends BaseActivity implements CameraView, SurfaceH
     protected void onStop() {
         super.onStop();
         kill();
+    }
+
+    public  void setCameraDisplayOrientation() {
+        int cameraId = -1;
+        int numberOfCameras = Camera.getNumberOfCameras();
+        for (int i = 0; i < numberOfCameras; i++) {
+            Camera.CameraInfo info = new Camera.CameraInfo();
+            Camera.getCameraInfo(i, info);
+            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                cameraId = i;
+                break;
+            }
+        }
+        android.hardware.Camera.CameraInfo info =
+                new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(cameraId, info);
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0: degrees = 0; break;
+            case Surface.ROTATION_90: degrees = 90; break;
+            case Surface.ROTATION_180: degrees = 180; break;
+            case Surface.ROTATION_270: degrees = 270; break;
+        }
+
+        Log.d("DisplayOrientation", String.valueOf(rotation) +"&&&&&&&&&&&&&&");
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;  // compensate the mirror
+        } else {  // back-facing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        mCamera.setDisplayOrientation(result);
     }
 }

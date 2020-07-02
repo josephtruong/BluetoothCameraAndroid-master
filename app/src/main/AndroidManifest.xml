@@ -34,10 +34,11 @@
         </activity>
         <activity
             android:name=".modules.watch.WatchActivity"
-            android:screenOrientation="portrait"></activity>
+           />
         <activity
             android:name=".modules.mobile.MobileActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".modules.camera.CameraActivity"
             android:screenOrientation="portrait"></activity>
